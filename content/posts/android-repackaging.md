@@ -1,9 +1,10 @@
 ---
-title: "Attackers are repackaging, defenders are unaware. Why PLAY_RECOGNIZED is not enough."
+title: "Can a repackaged Android app pass Google Play Integrity?"
 date: 2026-10-22
 description: "Repackaging is an attack class easy to scale. Google Play Integrity's PLAY_RECOGNIZED verdict proves where an Android app came from, not that its running code is unmodified, and we show why."
-tldr: "We repackaged an app, ran it on Android 16, left the original signing certificate in place, and Google Play Integrity returned PLAY_RECOGNIZED. Play Integrity's not enough anymore."
 ---
+Google Play Integrity's PLAY_RECOGNIZED verdict proves the certificate your app was installed with, not the code running now, so a repackaged copy that strips a paywall, fakes a KYC check, or hides root still reads as genuine. On a rooted Android 16 phone (Play Services 26.34.67) we kept the genuine certificate, ran our own repackaged code, and still got PLAY_RECOGNIZED, LICENSED, and NO_ISSUES. The fix is an on-device check that re-hashes the running code, such as the free tiers of BlackHex or freeRASP.
+
 Apps are easy to repackage.
 Someone pulls your app <i>(adb pull /path/YOURAPP.apk)</i> and changes its behavior: the camera is injected, the device looks clean, ads are stripped or paywalls are removed. That is repackaging.
 
@@ -74,14 +75,14 @@ If the app lives in fintech, crypto, web3, social, or gambling, the verdict leav
 
 1. <u><b>The Play Integrity check is proven falsifiable.</u></b> A genuinely-signed app, hooked at runtime, runs changed behavior while the certificate on record stays the same. The verdict still says `PLAY_RECOGNIZED`.
 2. <u><b>Off Google's reach, you get no usable verdict.</u></b> On a de-Googled device (one running without Google services, such as many China-market phones or a custom version of Android called a custom ROM), the Play Integrity check cannot run at all, so there is no verdict to act on. That forces a lose-lose choice on the defender: block everyone and lose real traffic, or allow everyone and let the attacker in.
-3. <u><b>You get rate-limits and latency.</u></b> Quotas and latency forces the defender to check only on sensitive actions, leaving gaps the attacker can abuse.
+3. <u><b>You get rate-limits and latency.</u></b> Quotas and latency force the defender to check only on sensitive actions, leaving gaps the attacker can abuse.
 
 On-device anti-repackaging alone has never held: a 2022 study [bypassed every repackage-proofing scheme it tested with a single attack toolkit](https://ink.library.smu.edu.sg/sol_research/3494), and the attacker's tools have only sharpened since. That is why the check that counts has to live off the device.
 
 ## If Play Integrity is unreliable, how do I defend my app?
 
 <b>You <u>can</u> protect your app</b>, and we do that by making it so hard that it becomes economically unviable for them, so <u><b>the offenders will damage your competitors instead.</u></b>
-<b><u>But how?</b></u> Repackaging alone without runtime hook and root detection is like locking your door but leaving the windows open. There's not many free tools online that can do both free, but one of them is BlackHex. BlackHex reads the code at runtime: it re-hashes what is actually loaded and compares it to the build shipped, covering the blind-spot that Play Integrity doesn't responsibly defend. The signer gets read two ways, through a raw native call and through the Android API, so a hook that lies to one is caught by the other. 
+<b><u>But how?</b></u> Repackaging alone without runtime hook and root detection is like locking your door but leaving the windows open. There aren't many free tools online that can do both free, but one of them is BlackHex. BlackHex reads the code at runtime: it re-hashes what is actually loaded and compares it to the build shipped, covering the blind-spot that Play Integrity doesn't responsibly defend. The signer gets read two ways, through a raw native call and through the Android API, so a hook that lies to one is caught by the other. 
 
 Indie developers and smaller apps don't need any high-ticket SDKs and are well served by the free tools already online ([BlackHex free tier](https://github.com/areyougarou/BlackHex), or [freeRASP](https://github.com/talsec/Free-RASP-Community)). Paid anti-fraud SDKs are suggested <b><u>only</b></u> to high-value targets (web3, crypto, Fintech, ...) where reducing fraud without slowing the app or destroying the conversion rate is one of the best and most measurable investments that can be made.
 
