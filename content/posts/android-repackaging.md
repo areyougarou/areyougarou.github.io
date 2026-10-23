@@ -9,8 +9,8 @@ Someone pulls your app <i>(adb pull /path/YOURAPP.apk)</i> and changes its behav
 
 <u><b><i>Why do we care?</i></b></u> ~ Your server-side decisions are based on device-based signals. If every isRooted, isHooked, isFrench (😨) check returns "false" you cannot tell the difference between good traffic and someone harming your app.
 This is particularly dangerous for <u>Fintech</u>, <u>Crypto</u>, <u>Web3</u> and <u>gambling apps</u> that have sensitive code to protect.
-<u><b><i>Why is it overlooked?</i></b></u> ~ Because security teams are academically trained to tackle the most <i>powerful</i> attacks, not the most <i>scalable and profitable</i>.
-And while your red team plays capture-the-flag on your paycheck trying to patch exotic exploits, a carder (someone who cashes out stolen payment cards) in his basement with a $20 ChatGPT subscription is three prompts away from fooling your KYC verifications.
+<u><b><i>Why is it overlooked?</i></b></u> ~ Because security teams are academically trained to tackle the most <i>powerful</i> attacks, not the most <i>scalable and profitable</i>. Unlike complex Frida runtime manipulation, a repackaged app can be passed down the line to non-technical operators and to other devices.
+And while your red team plays capture-the-flag on your paycheck trying to patch exotic exploits, a carder in his basement with a $20 ChatGPT subscription is three prompts away from fooling your KYC verifications.
 
 ## Google certifies code it never once looked at
 
