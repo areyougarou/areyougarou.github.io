@@ -1,0 +1,18 @@
+baseURL = 'https://areyougarou.github.io/'
+locale = 'en-us'
+title = 'areyougarou'
+# Serves layouts/robots.txt, which allows every crawler (AI bots included).
+enableRobotsTXT = true
+# No tags or categories: the site is a flat list of articles.
+disableKinds = ['taxonomy', 'term']
+
+# One Enter = new line in the same paragraph; a blank line = new paragraph (like Reddit).
+[markup.goldmark.renderer]
+hardWraps = true
+# Lets articles use HTML tags such as <b>, <i>, <u>. Safe here: only we write the content.
+unsafe = true
+[params]
+author = 'areyougarou'
+# Where the author name links to, opened in a new tab.
+authorURL = 'https://github.com/areyougarou'
+description = 'Android app security research: repackaging, Play Integrity, root detection, anti-fraud.'

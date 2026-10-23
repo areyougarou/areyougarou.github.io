@@ -1,0 +1,14 @@
+{{- /* A code-block line starting with "!! " is highlighted (bold, bright) and the marker is removed;
+       when a block has any highlighted line, its other lines are faded so the highlighted ones stand out. */ -}}
+{{- $lines := split (strings.TrimRight "\n" .Inner) "\n" }}
+{{- $marked := false }}
+{{- range $lines }}{{ if strings.HasPrefix . "!! " }}{{ $marked = true }}{{ end }}{{ end -}}
+<pre><code>
+{{- range $i, $line := $lines }}
+  {{- if $i }}{{ "\n" }}{{ end }}
+  {{- if strings.HasPrefix $line "!! " }}<b>{{ strings.TrimPrefix "!! " $line }}</b>
+  {{- else if $marked }}<span class="dim">{{ $line }}</span>
+  {{- else }}{{ $line }}
+  {{- end }}
+{{- end -}}
+</code></pre>

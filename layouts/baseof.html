@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+{{- $desc := .Description | default (cond .IsPage (.Summary | plainify | truncate 160) site.Params.description) }}
+<meta name="description" content="{{ $desc }}">
+<link rel="canonical" href="{{ .Params.canonicalURL | default .Permalink }}">
+<meta property="og:title" content="{{ .Title | default site.Title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
+{{- /* The feed stays discoverable for readers and syndication, with no visible link. */}}
+{{- with site.Home.OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{- end }}
+{{- if .IsPage }}
+{{- $author := dict "@type" "Person" "name" site.Params.author "url" site.Params.authorURL }}
+{{- $ld := dict "@context" "https://schema.org" "@type" "BlogPosting" "headline" .Title "description" $desc "datePublished" (.Date.Format "2006-01-02") "dateModified" (.Lastmod.Format "2006-01-02") "author" $author "publisher" $author "mainEntityOfPage" .Permalink }}
+{{- /* The front-matter "tldr" is a summary for search engines and AI only: it is not shown on the page. */}}
+{{- with .Params.tldr }}{{ $ld = merge $ld (dict "abstract" .) }}{{ end }}
+<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+{{- end }}
+<link rel="preload" href="{{ "fonts/source-code-pro.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<script>
+    // Dark for everyone; light only if this visitor chose it before.
+    try { if (localStorage.getItem("theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
+</script>
+<style>
+    /* Font and colors taken from ab-rizk.github.io; the font is self-hosted (SIL Open Font License).
+       The italic file is Adobe's variable font: Google's italic file has no bold, so bold italic rendered as plain italic. */
+    @font-face { font-family: "Source Code Pro"; src: url("{{ "fonts/source-code-pro.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+    @font-face { font-family: "Source Code Pro"; src: url("{{ "fonts/source-code-pro-italic-vf.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Cascadia Mono"; src: url("{{ "fonts/cascadia-mono-vf.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-display: swap; }
+    :root { --bg: #000; --fg: #dbdbdb; --ext: #f0c674; --border: 1px dashed rgba(219, 219, 219, 0.9); color-scheme: dark; }
+    [data-theme="light"] { --bg: #fff; --fg: #000; --ext: #9a6700; --border: 1px dashed #000; color-scheme: light; }
+    body { background: var(--bg); color: var(--fg); font-family: "Source Code Pro", monospace; font-size: 12.5px; line-height: 1.5; width: 90%; max-width: 600px; margin: 0 auto; }
+    ::selection { background: var(--fg); color: var(--bg); }
+    a { color: var(--fg); text-decoration: none; }
+    a:hover { background: var(--fg); color: var(--bg); }
+    /* Links in the article text that leave the site stand out in amber. */
+    .post a[href^="http"]:not([href*="areyougarou.github.io"]) { color: var(--ext); }
+    .post a[href^="http"]:not([href*="areyougarou.github.io"]):hover { background: var(--ext); color: var(--bg); }
+    header { display: flex; justify-content: space-between; align-items: center; border-top: var(--border); border-bottom: var(--border); margin: 25px 0; padding: 10px 0; }
+    header a { font-weight: bold; }
+    .avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 6px; }
+    /* Set for 0.3 s while switching theme, so colors fade instead of jumping. */
+    .theme-fade, .theme-fade * { transition: background-color 0.3s, color 0.3s, border-color 0.3s !important; }
+    #theme-toggle { background: none; border: 0; color: var(--fg); font: inherit; cursor: pointer; }
+    h1, h2, h3, h4 { font-size: 1em; font-weight: bold; margin: 1.6em 0 0.6em; }
+    h1 { margin-top: 0; }
+    /* The dash is drawn here, not typed in the heading, so search engines and AI read a clean heading. */
+    .post h2::before { content: "- "; }
+    @media (max-width: 500px) { body { font-size: 12px; } }
+    .meta { margin: 0 0 2.5em; }
+    ul.posts { list-style: none; padding: 0; }
+    ul.posts li { margin: 0 0 0.6em; }
+    ul.posts li::before { content: "-"; margin-right: 9px; }
+    img { max-width: 100%; height: auto; }
+    /* Flow arrows between list steps: centered on the page, not just inside the indented list item. */
+    ol, ul { padding-left: 2.5em; }
+    .flow-arrow { display: block; text-align: center; margin-left: -2.5em; }
+    /* Code blocks (``` in an article) look like a terminal window in both themes: Windows Terminal's
+       colors and font (Cascadia Mono, self-hosted, SIL Open Font License), a title bar with three dots,
+       and long lines wrapping instead of scrolling sideways. */
+    pre { position: relative; background: #0c0c0c; color: #ccc; font-family: "Cascadia Mono", Consolas, monospace; border: 1px solid #333; border-radius: 8px; padding: 2.6em 1em 1em; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+    pre::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1.8em; background: #2b2b2b; border-bottom: 1px solid #333; border-radius: 8px 8px 0 0; }
+    pre::after { content: ""; position: absolute; top: 0.6em; left: 0.9em; width: 0.6em; height: 0.6em; border-radius: 50%; background: #ff5f56; box-shadow: 1em 0 #ffbd2e, 2em 0 #27c93f; }
+    pre ::selection { background: #ccc; color: #0c0c0c; }
+    pre b { color: #fff; }
+    pre .dim { opacity: 0.45; }
+    code { font-family: inherit; }
+    .np { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1em; margin-top: 2em; }
+    footer { border-top: var(--border); margin: 20px 0; padding-top: 10px; text-align: right; }
+    #light-flash { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90vw; max-height: 80vh; z-index: 9; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    #light-flash.on { opacity: 1; transition-duration: 0.5s; }
+</style>
+</head>
+<body>
+<header>
+    <a href="{{ "" | relURL }}">homepage</a>
+    <button id="theme-toggle" aria-label="Switch light or dark mode">◐</button>
+</header>
+<main>
+{{ block "main" . }}{{ end }}
+</main>
+<footer>
+    <a href="{{ site.Params.authorURL }}" target="_blank" rel="noopener">GitHub</a>
+</footer>
+{{- /* Switching to light flashes an image over the page: 0.5 s fade in, 1.2 s hold, 0.3 s fade out (2 s total).
+       The image (~700 KB) is fetched only on the first switch, so normal page loads stay light. */}}
+<img id="light-flash" data-src="{{ "images/light-flash.png" | relURL }}" alt="" aria-hidden="true">
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const root = document.documentElement;
+        const light = root.dataset.theme !== "light";
+        root.classList.add("theme-fade");
+        root.dataset.theme = light ? "light" : "dark";
+        setTimeout(() => root.classList.remove("theme-fade"), 300);
+        try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+        if (!light) return;
+        const flash = document.getElementById("light-flash");
+        const show = () => {
+            flash.classList.add("on");
+            setTimeout(() => flash.classList.remove("on"), 1700);
+        };
+        if (!flash.getAttribute("src")) flash.src = flash.dataset.src;
+        if (flash.complete) show(); else flash.addEventListener("load", show, { once: true });
+    });
+</script>
+</body>
+</html>
