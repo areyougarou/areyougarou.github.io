@@ -2,9 +2,8 @@
 title: "Can a repackaged Android app pass Google Play Integrity?"
 date: 2026-10-22
 description: "Repackaging is an attack class easy to scale. Google Play Integrity's PLAY_RECOGNIZED verdict proves where an Android app came from, not that its running code is unmodified, and we show why."
+tldr: "Google Play Integrity's PLAY_RECOGNIZED verdict proves the certificate your app was installed with, not the code running now, so a repackaged copy that strips a paywall, fakes a KYC check, or hides root still reads as genuine. On a rooted Android 16 phone (Play Services 26.34.67) we kept the genuine certificate, ran our own repackaged code, and still got PLAY_RECOGNIZED, LICENSED, and NO_ISSUES. The fix is an on-device check that re-hashes the running code, such as the free tiers of BlackHex or freeRASP."
 ---
-Google Play Integrity's PLAY_RECOGNIZED verdict proves the certificate your app was installed with, not the code running now, so a repackaged copy that strips a paywall, fakes a KYC check, or hides root still reads as genuine. On a rooted Android 16 phone (Play Services 26.34.67) we kept the genuine certificate, ran our own repackaged code, and still got PLAY_RECOGNIZED, LICENSED, and NO_ISSUES. The fix is an on-device check that re-hashes the running code, such as the free tiers of BlackHex or freeRASP.
-
 Apps are easy to repackage.
 Someone pulls your app <i>(adb pull /path/YOURAPP.apk)</i> and changes its behavior: the camera is injected, the device looks clean, ads are stripped or paywalls are removed. That is repackaging.
 
@@ -85,7 +84,3 @@ On-device anti-repackaging alone has never held: a 2022 study [bypassed every re
 <b><u>But how?</b></u> Repackaging alone without runtime hook and root detection is like locking your door but leaving the windows open. There aren't many free tools online that can do both free, but one of them is BlackHex. BlackHex reads the code at runtime: it re-hashes what is actually loaded and compares it to the build shipped, covering the blind-spot that Play Integrity doesn't responsibly defend. The signer gets read two ways, through a raw native call and through the Android API, so a hook that lies to one is caught by the other. 
 
 Indie developers and smaller apps don't need any high-ticket SDKs and are well served by the free tools already online ([BlackHex free tier](https://github.com/areyougarou/BlackHex), or [freeRASP](https://github.com/talsec/Free-RASP-Community)). Paid anti-fraud SDKs are suggested <b><u>only</b></u> to high-value targets (web3, crypto, Fintech, ...) where reducing fraud without slowing the app or destroying the conversion rate is one of the best and most measurable investments that can be made.
-
-## The short version
-
-Repackaging scales because the attacker does the work once and the copy runs on every device. For fintech, crypto, web3, and gambling apps, that copy can strip a paywall, fake an identity check, or hide that the phone is rooted. Google Play Integrity tries to stop repackaging but it's easy to spoof and we prove it in this article. Anti-fraud SDKs are mandatory for sensitive apps, BlackHex is a rare example of a good free-tier anti-fraud SDK. 

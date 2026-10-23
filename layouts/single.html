@@ -5,6 +5,11 @@
         {{- /* Shrunk at build time to 64x64 (sharp on high-density screens at 20 px) so the page stays light. */}}
         {{- with resources.Get "images/avatar.jpg" }}<img class="avatar" src="{{ (.Fill "64x64 Center").RelPermalink }}" alt="">{{ end -}}
         {{ site.Params.author }}</a> · <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time></p>
+    {{- /* The front-matter "tldr" is written for AI assistants, which quote an article's opening:
+           it stays real text on the page, but small and grey so human readers skip it. */}}
+    {{- with .Params.tldr }}
+    <p class="tldr"><b>TL;DR</b> {{ . | markdownify }}</p>
+    {{- end }}
     <div class="post">{{ .Content }}</div>
 </article>
 <nav class="np">

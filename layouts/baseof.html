@@ -30,8 +30,8 @@
     @font-face { font-family: "Source Code Pro"; src: url("{{ "fonts/source-code-pro.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
     @font-face { font-family: "Source Code Pro"; src: url("{{ "fonts/source-code-pro-italic-vf.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap; }
     @font-face { font-family: "Cascadia Mono"; src: url("{{ "fonts/cascadia-mono-vf.woff2" | relURL }}") format("woff2"); font-weight: 400 700; font-display: swap; }
-    :root { --bg: #000; --fg: #dbdbdb; --ext: #f0c674; --border: 1px dashed rgba(219, 219, 219, 0.9); color-scheme: dark; }
-    [data-theme="light"] { --bg: #fff; --fg: #000; --ext: #9a6700; --border: 1px dashed #000; color-scheme: light; }
+    :root { --bg: #000; --fg: #dbdbdb; --ext: #f0c674; --border: 1px dashed rgba(219, 219, 219, 0.9); --box: #1c1c1c; color-scheme: dark; }
+    [data-theme="light"] { --bg: #fff; --fg: #000; --ext: #9a6700; --border: 1px dashed #000; --box: #ececec; color-scheme: light; }
     body { background: var(--bg); color: var(--fg); font-family: "Source Code Pro", monospace; font-size: 12.5px; line-height: 1.5; width: 90%; max-width: 600px; margin: 0 auto; }
     ::selection { background: var(--fg); color: var(--bg); }
     a { color: var(--fg); text-decoration: none; }
@@ -51,6 +51,8 @@
     .post h2::before { content: "- "; }
     @media (max-width: 500px) { body { font-size: 12px; } }
     .meta { margin: 0 0 2.5em; }
+    .tldr { background: var(--box); font-size: 0.85em; font-style: italic; opacity: 0.75; padding: 0.7em 1em; border-radius: 4px; margin: 0 0 2.5em; }
+    .tldr b { font-style: normal; margin-right: 0.5em; }
     ul.posts { list-style: none; padding: 0; }
     ul.posts li { margin: 0 0 0.6em; }
     ul.posts li::before { content: "-"; margin-right: 9px; }
