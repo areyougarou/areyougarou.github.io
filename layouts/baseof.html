@@ -20,6 +20,10 @@
 <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "BlogPosting" "headline" .Title "description" $desc "datePublished" (.Date.Format "2006-01-02") "dateModified" (.Lastmod.Format "2006-01-02") "author" $author "publisher" $author "mainEntityOfPage" .Permalink | jsonify | safeJS }}</script>
 {{- end }}
 <link rel="preload" href="{{ "fonts/source-code-pro.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- /* The light-mode flash image, compressed to WebP at build time. "prefetch" downloads it
+       only after the page has loaded, so the flash shows at once instead of waiting for it. */}}
+{{- $flash := (resources.Get "images/light-flash.png").Process "webp q80" }}
+<link rel="prefetch" href="{{ $flash.RelPermalink }}" as="image">
 <script>
     // Dark for everyone; light only if this visitor chose it before.
     try { if (localStorage.getItem("theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
@@ -88,8 +92,8 @@
     <a href="{{ site.Params.authorURL }}" target="_blank" rel="noopener">GitHub</a>
 </footer>
 {{- /* Switching to light flashes an image over the page: 0.5 s fade in, 1.2 s hold, 0.3 s fade out (2 s total).
-       The image (~700 KB) is fetched only on the first switch, so normal page loads stay light. */}}
-<img id="light-flash" data-src="{{ "images/light-flash.png" | relURL }}" alt="" aria-hidden="true">
+       src is set on the first switch; by then the prefetch has usually put the image in the browser cache. */}}
+<img id="light-flash" data-src="{{ $flash.RelPermalink }}" alt="" aria-hidden="true">
 <script>
     document.getElementById("theme-toggle").addEventListener("click", () => {
         const root = document.documentElement;
